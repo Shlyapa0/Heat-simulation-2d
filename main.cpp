@@ -1,4 +1,5 @@
 #include "mesh.h"
+#include "iostream"
 #include "region.h"
 #include "shapes/point.h"
 #include "shapes/shape.h"
@@ -28,6 +29,9 @@ double* doStep(double* numbers) {
 int main() {
     int N=100;
     int M=100;
-    point p;
+    section* a =  new section(point(1,2), point(2,3));
+    section* b = new section(point(1,3), point(2,2));
+    std::optional p = a->intersect(b);
+    std::cout << p->x << " " << p->y << std::endl;
     return 0;
 }
