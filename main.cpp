@@ -44,9 +44,9 @@ int main() {
         new Section(p6,p1)
     };
     Region region(shapes);
-    Section* a =  new Section(p1, p2);
-    Section* b = new Section(p2, p3);
-    //Arc* aarc = new Arc(Point(2,0), 1., M_PI/2, 3/2*M_PI);
+    Section* a =  new Section(Point(0,0), Point(4,4));
+    Section* b = new Section(Point(4,0), Point(0,4));
+    Arc* aarc = new Arc(Point(2,0), 1., M_PI/2, 3/2*M_PI);
     std::optional<const Shape*> intersection = a->intersect(b);
     if (intersection.has_value()) {
         const Shape* shapePtr = intersection.value();

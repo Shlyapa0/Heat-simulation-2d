@@ -39,8 +39,6 @@ std::optional<const Shape*> Section::intersect(const Shape* other) const {
             Point* p1 = new Point(x1, m * x1 + b);
             Point* p2 = new Point(x2, m * x2 + b);
 
-            // Check if the intersection points are within the line segment AND on the arc
-
             if (onSegment(start_point, end_point, *p1) && arc->isPointOnArc(*p1)) return p1;
             if (onSegment(start_point, end_point, *p2) && arc->isPointOnArc(*p2)) return p2;
         }

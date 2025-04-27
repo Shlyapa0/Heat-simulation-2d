@@ -41,7 +41,6 @@ bool Arc::isPointOnArc(const Point& Point) const {
     while (end < 0) end += 2 * M_PI;
     while (end >= 2 * M_PI) end -= 2 * M_PI;
 
-
     // Check if the angle is within the arc's range, handling wrap-around cases.
     if (start <= end) {
         return (angle >= start && angle <= end);

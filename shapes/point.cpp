@@ -17,3 +17,11 @@ double Point::getX() const {
 double Point::getY() const {
     return y;
 }
+
+Point& Point::operator=(const Point& other) {
+    if (this != &other) {
+        x = other.x;
+        y = other.y;
+    }
+    return *this;
+}
