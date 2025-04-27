@@ -6,11 +6,11 @@
 
 class Region {
     public:
-        std::vector<Shape*> shapes;
         ~Region();
-        Region(std::vector<Shape*> shape_list);
+        Region(const std::vector<Shape*>& shape_list);
+        Shape* getShape(int i);
     private:
-        int temp;
+        std::vector<Shape*> shapes;
     };
 
 #endif

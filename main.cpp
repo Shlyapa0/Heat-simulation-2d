@@ -1,5 +1,6 @@
 #include "mesh.h"
 #include <cmath>
+#include <vector>
 #include "iostream"
 #include "region.h"
 #include "shapes/point.h"
@@ -28,14 +29,20 @@ double* doStep(double* numbers) {
 }
 
 int main() {
-    int N=100;
-    int M=100;
-    section a =  section(point(0,0), point(4,0));
-    section b = section(point(0,0), point(2,0));
-    arc aarc = arc(point(2,0), 1, M_PI/2, 3/2*M_PI);
-    std::optional p = a.intersect(b);
-    std::cout << p->x << " " << p->y << std::endl;
-    p = a.intersect(aarc);
-    std::cout << p->x << " " << p->y << std::endl;
+    std::vector<Shape*> shapes = std::vector<Shape*> {
+        new Section(Point(-1,0), Point(-1, 2)),
+        new Section(Point(-1,2), Point(0,2)),
+        new Arc(Point(1,2), 1, M_PI, 3*M_PI_2),
+        new Section(Point(1,1), Point(1,0)),
+        new Section(Point(1,0),Point(-1,0))
+    };
+    Region region(shapes);
+    Section* a =  new Section(Point(0,0), Point(4,0));
+    Section* b = new Section(Point(0,0), Point(2,0));
+    Arc* aarc = new Arc(Point(2,0), 1., M_PI/2, 3/2*M_PI);
+    // std::optional p = a->intersect(b);
+    // std::cout << p.getX() << " " << p.getY() << std::endl;
+    // p = a.intersect(aarc);
+    // std::cout << p->getX() << " " << p->getY() << std::endl;
     return 0;
 }

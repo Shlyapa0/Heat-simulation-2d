@@ -1,14 +1,22 @@
 #include "shapes/arc.h"
 #include <cmath>
 
-arc::arc(point p0, double rad, double ang_start, double ang_end) {
-    center_p = p0;
+Arc::Arc(const Point& p0, double rad, double ang_start, double ang_end) {
+    center_point = p0;
     radius = rad;
     start_angle = ang_start;
     end_angle = ang_end;
 }
 
-double arc::normalizeAngle(double angle) const {
+Point Arc::getCenterPoint() const {
+    return center_point;
+}
+
+double Arc::getRadius() const {
+    return radius;
+}
+
+double Arc::normalizeAngle(double angle) const {
     while (angle < 0) {
         angle += 2 * M_PI;
     }
@@ -18,9 +26,9 @@ double arc::normalizeAngle(double angle) const {
     return angle;
 }
 
-bool arc::isPointOnArc(const point& point) const {
-    // Calculate the angle of the point relative to the arc's center
-    double angle = atan2(point.y - center_p.y, point.x - center_p.x);
+bool Arc::isPointOnArc(const Point& Point) const {
+    // Calculate the angle of the Point relative to the arc's center
+    double angle = atan2(Point.getY() - center_point.getY(), Point.getX() - center_point.getX());
     // Normalize the angle to be between 0 and 2*PI
 
     angle = normalizeAngle(angle);

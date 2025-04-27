@@ -1,11 +1,19 @@
 #include "shapes/point.h"
 
-point::point() {
+Point::Point() {
     x=0.;
     y=0.;
 }
 
-point::point(double x_val, double y_val) {
+Point::Point(double x_val, double y_val) {
     x=x_val;
     y=y_val;
+}
+
+double Point::getX() const {
+    return x;
+}
+
+double Point::getY() const {
+    return y;
 }
