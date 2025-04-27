@@ -5,7 +5,7 @@ Point::Point() {
     y=0.;
 }
 
-Point::Point(double x_val, double y_val) {
+Point::Point(const double x_val, const double y_val) {
     x=x_val;
     y=y_val;
 }
