@@ -1,7 +1,9 @@
 #include "mesh.h"
+
 #include <cmath>
 #include <vector>
-#include "iostream"
+#include <iostream>
+
 #include "region.h"
 #include "shapes/point.h"
 #include "shapes/shape.h"
@@ -58,5 +60,7 @@ int main() {
         } else {
         std::cout << "No intersection." << std::endl;
     }
+    Point init_point = Point(0.0,0.5);
+    Mesh mesh(region, 0.1, 5., init_point);
     return 0;
 }

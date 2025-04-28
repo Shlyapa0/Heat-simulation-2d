@@ -2,9 +2,6 @@
 
 Region::~Region()
 {
-    for (Shape* shape : shapes) {
-        delete shape;
-    }
     shapes.clear();
 }
 
@@ -17,4 +14,8 @@ Region::Region(const std::vector<Shape*>& shape_list)
 
 Shape* Region::getShape(int i) {
     return shapes[i];
+}
+
+size_t Region::getSize() {
+    return shapes.size();
 }

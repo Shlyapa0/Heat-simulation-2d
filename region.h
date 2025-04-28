@@ -8,6 +8,7 @@ class Region {
     public:
         ~Region();
         Region(const std::vector<Shape*>& shape_list);
+        size_t getSize();
         Shape* getShape(int i);
     private:
         std::vector<Shape*> shapes;

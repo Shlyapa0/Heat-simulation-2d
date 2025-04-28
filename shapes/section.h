@@ -12,8 +12,8 @@ struct Section : public Shape {
         std::optional<const Shape*> intersect(const Shape* other) const override;
         ~Section() override {};
     private:
-        const Point& start_point;
-        const Point& end_point;
+        const Point start_point;
+        const Point end_point;
 };
 
 #endif
