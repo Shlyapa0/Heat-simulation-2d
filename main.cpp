@@ -9,6 +9,7 @@
 #include "shapes/shape.h"
 #include "shapes/section.h"
 #include "shapes/arc.h"
+#include "Solver.h"
 
 double D1u(double u1, double u2, double dh)
 {
@@ -38,18 +39,25 @@ int main() {
     double rad = 1;
     Point p5 = Point(1,1);
     Point p6 = Point(1,0);
+    Point p33 = Point(1,2);
     std::vector<Shape*> shapes = std::vector<Shape*> {
+        // new Section(p1, p2),
+        // new Section(p2, p3),
+        // new Arc(p4, rad, M_PI, 3*M_PI_2),
+        // new Section(p5, p6),
+        // new Section(p6,p1)
         new Section(p1, p2),
         new Section(p2, p3),
-        new Arc(p4, rad, M_PI, 3*M_PI_2),
+        new Section(p3, p33),
+        new Section(p33, p5),
         new Section(p5, p6),
         new Section(p6,p1)
     };
     Region region(shapes);
     Section* a =  new Section(Point(0,0), Point(4,4));
     Section* b = new Section(Point(4,0), Point(0,4));
-    Arc* aarc = new Arc(Point(2,0), 1., M_PI/2, 3/2*M_PI);
-    std::optional<const Shape*> intersection = a->intersect(b);
+    Arc* aarc = new Arc(Point(4,4), 1., M_PI, 3/2*M_PI);
+    std::optional<const Shape*> intersection = a->intersect(aarc);
     if (intersection.has_value()) {
         const Shape* shapePtr = intersection.value();
         if (const Point* pointPtr = dynamic_cast<const Point*>(shapePtr)) {
@@ -61,6 +69,9 @@ int main() {
         std::cout << "No intersection." << std::endl;
     }
     Point init_point = Point(0.0,0.5);
-    Mesh mesh(region, 0.1, 5., init_point);
+    Mesh mesh(region, 0.1, 5., 0.1, init_point);
+    Solver solver(mesh, nullptr, nullptr);
+    solver.GetInitialPoints();
+    solver.PrintToFile("output.txt");
     return 0;
 }

@@ -12,7 +12,8 @@
                 "-I.",
                 "*.h",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}",
+                //"${fileDirname}/${fileBasenameNoExtension}",
+                "main",
                 "-std=c++17",
             ],
             "options": {

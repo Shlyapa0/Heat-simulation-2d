@@ -25,3 +25,11 @@ Point& Point::operator=(const Point& other) {
     }
     return *this;
 }
+
+int Point::getBorder() const {
+    return num_border;
+}
+
+void Point::setBorder(const int num_border) {
+    this->num_border = num_border;
+}

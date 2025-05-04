@@ -51,5 +51,6 @@
         "iostream": "cpp",
         "thread": "cpp",
         "cfenv": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/workspaces/codespaces-blank/SDL/src/hidapi/netbsd"
 }

@@ -11,11 +11,14 @@ struct Point : public Shape {
         Point& operator=(const Point& other);
         double getX() const;
         double getY() const;
+        int getBorder() const;
+        void setBorder(const int num_border);
         std::optional<const Shape*> intersect(const Shape* other) const override {return std::nullopt;};
         ~Point() override {};
     private:
         double x;
         double y;
+        int num_border = 0; //0 - not a border
 };
 
 #endif
