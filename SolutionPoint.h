@@ -12,6 +12,7 @@ class SolutionPoint {
         double getX() const;
         double getY() const;
         double getValue() const;
+        int getBorder() const { return num_border; }
         void setValue(double value_val);
         ~SolutionPoint() {};
     private:

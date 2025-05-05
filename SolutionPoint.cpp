@@ -11,6 +11,7 @@ SolutionPoint& SolutionPoint::operator=(const SolutionPoint& other) {
         x = other.x;
         y = other.y;
         value = other.value;
+        num_border = other.num_border;
     }
     return *this;
 }

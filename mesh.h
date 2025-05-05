@@ -4,6 +4,13 @@
 #include "shapes/point.h"
 #include "region.h"
 
+struct NeighborInfo {
+    int upIndex = -1;
+    int downIndex = -1;
+    int leftIndex = -1;
+    int rightIndex = -1;
+};
+
 class Mesh {
     public:
         int getSize();
@@ -16,6 +23,11 @@ class Mesh {
         double cell_size;
         Point initial_point;
         std::vector<Point*> allPoints;
+        std::vector<NeighborInfo> neighborInfo;
+        void findNeighbors(int index);
+        void findNeighbors();
+    public:
+        std::vector<NeighborInfo> getNeighborInfo();
 };
 
 #endif

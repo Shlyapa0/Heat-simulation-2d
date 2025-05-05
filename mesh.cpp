@@ -43,8 +43,11 @@ Mesh::Mesh(Region reg, double max_cell_size, double max_reg_size, double cell_sz
             getPointsY(allPoints, point, ptr2);
         }
     }
+    std::size_t index = 0;
     for (auto point : allPoints) {
+        //fout << index << ": " << point->getX() << ' ' << point->getY() << ' ' << point->getBorder() << std::endl;
         fout << point->getX() << ' ' << point->getY() << ' ' << point->getBorder() << std::endl;
+        index++;
     }
     fout.close();
 }
@@ -89,4 +92,55 @@ void Mesh::getPointsY(std::vector<Point*>& allPoints, Point* initial_point, std:
             allPoints.push_back(newPoint);
         }
     }
+}
+
+void Mesh::findNeighbors(int index) {
+    double x = allPoints[index]->getX();
+    double y = allPoints[index]->getY();
+
+    for (int j = 0; j < allPoints.size(); ++j) {
+        if (index == j) continue;
+
+        double dx = allPoints[j]->getX() - x;
+        double dy = allPoints[j]->getY() - y;
+
+        if (std::abs(dx) < cell_size && std::abs(dy) < cell_size) {
+            // Проверяем, является ли точка j соседом точки i
+            // (вверх, вниз, влево, вправо).
+            if (allPoints[j]->getX() == x && allPoints[j]->getY() > y) {
+                if (neighborInfo[index].upIndex == -1) {
+                    neighborInfo[index].upIndex = j;
+                }
+            }
+            if (allPoints[j]->getX() == x && allPoints[j]->getY() < y) {
+                if (neighborInfo[index].downIndex == -1) {
+                    neighborInfo[index].downIndex = j;
+                }
+            }
+            if (allPoints[j]->getY() == y && allPoints[j]->getX() < x) {
+                if (neighborInfo[index].leftIndex == -1) {
+                    neighborInfo[index].leftIndex = j;
+                }
+            }
+            if (allPoints[j]->getY() == y && allPoints[j]->getX() > x) {
+                if (neighborInfo[index].rightIndex == -1) {
+                    neighborInfo[index].rightIndex = j;
+                }
+            }
+        }
+    }
+}
+
+void Mesh::findNeighbors() {
+    neighborInfo.resize(allPoints.size());
+    for (int i = 0; i < allPoints.size(); ++i) {
+        findNeighbors(i);
+    }
+}
+
+std::vector<NeighborInfo> Mesh::getNeighborInfo() {
+    if (neighborInfo.empty()) {
+        findNeighbors();
+    }
+    return neighborInfo;
 }

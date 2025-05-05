@@ -16,7 +16,9 @@ class Solver {
         std::vector<SolutionPoint> GetSolutionPoints() const;
     private:
         std::vector<SolutionPoint> solution_points;
+        std::vector<SolutionPoint> solution_points_previous;
         std::vector<Point*> mesh_points;
+        std::vector<NeighborInfo> neighbor_info;
         //double* pattern;
         //double* borderEquation;
 };
