@@ -1,10 +1,10 @@
 #include <SolutionPoint.h>
 
-SolutionPoint::SolutionPoint() : x(0), y(0), value(0) {}
+SolutionPoint::SolutionPoint() : x(0), y(0), value(0), num_border(0) {}
 
-SolutionPoint::SolutionPoint(const double x_val, const double y_val) : x(x_val), y(y_val), value(0) {}
+SolutionPoint::SolutionPoint(const double x_val, const double y_val) : x(x_val), y(y_val), value(0), num_border(0) {}
 
-SolutionPoint::SolutionPoint(const double x_val, const double y_val, const double value_val) : x(x_val), y(y_val), value(value_val) {}
+SolutionPoint::SolutionPoint(const double x_val, const double y_val, const double value_val) : x(x_val), y(y_val), value(value_val), num_border(0) {}
 
 SolutionPoint& SolutionPoint::operator=(const SolutionPoint& other) {
     if (this != &other) {

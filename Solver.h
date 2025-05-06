@@ -17,6 +17,7 @@ class Solver {
     private:
         std::vector<SolutionPoint> solution_points;
         std::vector<SolutionPoint> solution_points_previous;
+        std::vector<SolutionPoint> solution_points_next;
         std::vector<Point*> mesh_points;
         std::vector<NeighborInfo> neighbor_info;
         //double* pattern;

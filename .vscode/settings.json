@@ -50,7 +50,8 @@
         "ratio": "cpp",
         "iostream": "cpp",
         "thread": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "map": "cpp"
     },
     "cmake.sourceDirectory": "/workspaces/codespaces-blank/SDL/src/hidapi/netbsd"
 }

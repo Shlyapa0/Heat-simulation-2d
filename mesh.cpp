@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cmath>
 
-#define EPS 1e-7
+//#define EPS 1e-7
 
 Mesh::Mesh(Region reg, double max_cell_size, double max_reg_size, double cell_sz, Point& initial_p) {
     initial_point = initial_p;
@@ -94,6 +94,8 @@ void Mesh::getPointsY(std::vector<Point*>& allPoints, Point* initial_point, std:
     }
 }
 
+const double EPS = std::numeric_limits<double>::epsilon() * 1e8;
+
 void Mesh::findNeighbors(int index) {
     double x = allPoints[index]->getX();
     double y = allPoints[index]->getY();
@@ -104,28 +106,33 @@ void Mesh::findNeighbors(int index) {
         double dx = allPoints[j]->getX() - x;
         double dy = allPoints[j]->getY() - y;
 
-        if (std::abs(dx) < cell_size && std::abs(dy) < cell_size) {
-            // Проверяем, является ли точка j соседом точки i
-            // (вверх, вниз, влево, вправо).
-            if (allPoints[j]->getX() == x && allPoints[j]->getY() > y) {
-                if (neighborInfo[index].upIndex == -1) {
-                    neighborInfo[index].upIndex = j;
+        // Проверяем, находятся ли точки достаточно близко друг к другу
+        if (std::abs(dx) < cell_size+EPS && std::abs(dy) < cell_size+EPS) {
+            // Используем сравнение с допуском для координат
+            if (std::abs(dx) < EPS) {
+                // Проверяем, является ли точка j соседом точки i (вверх, вниз).
+                if (dy>0) {
+                    if (neighborInfo[index].upIndex == -1) {
+                        neighborInfo[index].upIndex = j;
+                    }
+                } else if (dy<0) {
+                    if (neighborInfo[index].downIndex == -1) {
+                        neighborInfo[index].downIndex = j;
+                    }
                 }
             }
-            if (allPoints[j]->getX() == x && allPoints[j]->getY() < y) {
-                if (neighborInfo[index].downIndex == -1) {
-                    neighborInfo[index].downIndex = j;
+             if (std::abs(dy) < EPS){
+               // Проверяем, является ли точка j соседом точки i (влево, вправо).
+                if (dx<0) {
+                    if (neighborInfo[index].leftIndex == -1) {
+                        neighborInfo[index].leftIndex = j;
+                    }
+                } else if (dx>0) {
+                    if (neighborInfo[index].rightIndex == -1) {
+                        neighborInfo[index].rightIndex = j;
+                    }
                 }
-            }
-            if (allPoints[j]->getY() == y && allPoints[j]->getX() < x) {
-                if (neighborInfo[index].leftIndex == -1) {
-                    neighborInfo[index].leftIndex = j;
-                }
-            }
-            if (allPoints[j]->getY() == y && allPoints[j]->getX() > x) {
-                if (neighborInfo[index].rightIndex == -1) {
-                    neighborInfo[index].rightIndex = j;
-                }
+
             }
         }
     }
@@ -139,8 +146,6 @@ void Mesh::findNeighbors() {
 }
 
 std::vector<NeighborInfo> Mesh::getNeighborInfo() {
-    if (neighborInfo.empty()) {
-        findNeighbors();
-    }
+    findNeighbors();
     return neighborInfo;
 }
