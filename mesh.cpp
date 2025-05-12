@@ -6,7 +6,7 @@
 
 //#define EPS 1e-7
 
-Mesh::Mesh(Region reg, double max_cell_size, double max_reg_size, double cell_sz, Point& initial_p) {
+Mesh::Mesh(Region reg, double max_reg_size, double cell_sz, Point& initial_p) {
     initial_point = initial_p;
     std::ofstream fout;
     fout.open("mesh.txt");
@@ -109,7 +109,8 @@ void Mesh::findNeighbors(int index) {
         // Проверяем, находятся ли точки достаточно близко друг к другу
         if (std::abs(dx) < cell_size+EPS && std::abs(dy) < cell_size+EPS) {
             // Используем сравнение с допуском для координат
-            if (std::abs(dx) < EPS) {
+            //if (std::abs(dx) < EPS) {
+            if (std::abs(dx) < cell_size+EPS) {
                 // Проверяем, является ли точка j соседом точки i (вверх, вниз).
                 if (dy>0) {
                     if (neighborInfo[index].upIndex == -1) {
@@ -121,8 +122,9 @@ void Mesh::findNeighbors(int index) {
                     }
                 }
             }
-             if (std::abs(dy) < EPS){
-               // Проверяем, является ли точка j соседом точки i (влево, вправо).
+            //if (std::abs(dy) < EPS){
+            if (std::abs(dy) < cell_size+EPS) {
+                // Проверяем, является ли точка j соседом точки i (влево, вправо).
                 if (dx<0) {
                     if (neighborInfo[index].leftIndex == -1) {
                         neighborInfo[index].leftIndex = j;

@@ -54,14 +54,15 @@ int main() {
         std::cout << "No intersection." << std::endl;
     }
     Point init_point = Point(0.0,0.5);
-    Mesh mesh(region, 0.2, 5., 0.2, init_point);
+    Mesh mesh(region, 5., 0.1, init_point);
     Solver solver(mesh, nullptr, nullptr);
     solver.GetInitialPoints();
     solver.PrintToFile("output_init.txt");
-    for (int i=0; i<2; ++i) {
-        // solver.PrintToFile("output.txt");
-        solver.Step();
-    }
+    solver.Run();
+    // for (int i=0; i<2; ++i) {
+    //     // solver.PrintToFile("output.txt");
+    //     solver.Step();
+    // }
     solver.PrintToFile("output.txt");
     return 0;
 }

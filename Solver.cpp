@@ -7,7 +7,9 @@
 
 #define BORDER1 y - x - 2
 #define BORDER0 0
-#define SOURCE0 pow(pow(x, 2) + pow(y, 2) + 1, -1)
+#define EPS 1e-7
+//#define SOURCE0 pow(pow(x, 2) + pow(y, 2) + 1, -1)
+#define SOURCE0 0
 
 Solver::Solver() {
     // Constructor implementation
@@ -18,17 +20,17 @@ Solver::Solver(Mesh mesh, double* pattern, double* borderEquation) {
     //this->borderEquation = borderEquation;
     mesh_points = mesh.getPoints();
     neighbor_info = mesh.getNeighborInfo();
+    solution_points_prev.resize(mesh_points.size());
+    solution_points_next.resize(mesh_points.size());
     for (auto point : mesh_points) {
-        //double x = point->getX();
-        //double y = point->getY();
-        //solution_points.push_back(SolutionPoint(x, y, 0.0, point->getBorder()));
+        // double x = point->getX();
+        // double y = point->getY();
+        // solution_points.push_back(SolutionPoint(x, y, 0.0, point->getBorder()));
     }
-    // std::sort(solution_points.begin(), solution_points.end(), [](const SolutionPoint& a, const SolutionPoint& b) {
-    //     return a.getX() < b.getX() || (a.getX() == b.getX() && a.getY() < b.getY());
-    // });
 }
 
 void Solver::Step() {
+    solution_points_prev = solution_points;
     solution_points_next = solution_points;
     for (int i=0; i < solution_points.size(); i++) {
         SolutionPoint prev_point = solution_points[i];
@@ -41,7 +43,6 @@ void Solver::Step() {
             double x = solution_points[i].getX();
             double y = solution_points[i].getY();
             double source = SOURCE0;
-            //solution_points_next[i].setValue(solution_points[i].getValue()+5);
             solution_points_next[i].setValue(calcPattern(
                 solution_points[neiborLeftIndex].getValue(),
                 solution_points[neiborRightIndex].getValue(),
@@ -54,36 +55,47 @@ void Solver::Step() {
                 source
             ));
         }
-        std::cout << "Point " << i << ": " << solution_points[i].getValue() 
-        << " -> " << solution_points_next[i].getValue() << std::endl;
+        // std::cout << "Point " << i << ": " << solution_points[i].getValue() 
+        // << " -> " << solution_points_next[i].getValue() << std::endl;
     }
     solution_points = solution_points_next;
-    // // Compare solution_points and solution_points_next
-    // bool isConverged = true;
-    // for (int i = 0; i < solution_points.size(); i++) {
-    //     if (std::abs(solution_points[i].getValue() - solution_points_next[i].getValue()) > 1e-6) {
-    //         isConverged = false;
-    //         break;
-    //     }
-    // }
-
-    // if (isConverged) {
-    //     std::cout << "Solver has converged." << std::endl;
-    // }
 }
 
-void Solver::Run() {
-    // Main loop for the solver
-    GetInitialPoints();
+bool Solver::CheckConvergence() const {
+    for (int i = 0; i < solution_points.size(); i++) {
+        if (std::abs(solution_points[i].getValue() - solution_points_prev[i].getValue()) > EPS) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void Solver::InitialStep() {
     Step();
 }
 
+void Solver::Run() {
+    GetInitialPoints();
+    InitialStep();
+    for (;!CheckConvergence();) {
+        Step();
+    }
+    std::cout << "Solution converged!" << std::endl;
+    PrintToFile("output.txt");
+}
+
 void Solver::GetInitialPoints() {
+    solution_points.clear();
+    solution_points_next.clear();
+    solution_points_prev.clear();
+    solution_points.reserve(mesh_points.size());
+    solution_points_next.reserve(mesh_points.size());
+    solution_points_prev.reserve(mesh_points.size());
     // Initialize solution points
     for (auto point : mesh_points) {
         double x = point->getX();
         double y = point->getY();
-        solution_points.push_back(SolutionPoint(x, y));
+        solution_points.push_back(SolutionPoint(x, y, 0.0, point->getBorder()));
         if (point->getBorder() == 0) {
             solution_points.back().setValue(BORDER0);
         } else {
