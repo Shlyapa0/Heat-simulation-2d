@@ -45,6 +45,12 @@ Mesh::Mesh(Region reg, double max_reg_size, double cell_sz, Point& initial_p) {
             getPointsY(allPoints, point, ptr2);
         }
     }
+    neighborInfo.resize(allPoints.size());
+    findNeighbors();
+    for (int i=0; i<allPoints.size(); i++) {
+        if (allPoints[i]->getBorder()==0)
+        addBorder(i, reg);
+    }
     std::size_t index = 0;
     for (auto point : allPoints) {
         //fout << index << ": " << point->getX() << ' ' << point->getY() << ' ' << point->getBorder() << std::endl;
@@ -70,9 +76,12 @@ void Mesh::getPointsX(std::vector<Point*>& initialPoints, std::optional<const Sh
         Point* newPoint = new Point(x1, y0);
         newPoint->setBorder(1);
         initialPoints.push_back(newPoint);
-        for (; std::abs(x1 - x0) > 2*cell_size;) {
+        for (; std::abs(x1 - x0) > cell_size;) {
             double step = (x1 > x0) ? -cell_size : cell_size;
             x1 += step;
+            if (std::abs(x1 - x0) < EPS) {
+                continue;
+            }
             initialPoints.push_back(new Point(x1, y0));
         }
     }
@@ -88,8 +97,11 @@ void Mesh::getPointsY(std::vector<Point*>& allPoints, Point* initial_point, std:
         allPoints.push_back(newPoint);
         for (; std::abs(y1 - y0) > cell_size;) {
             double step = (y1 > y0) ? -cell_size : cell_size;
-            y1 += step;
-            Point* newPoint = new Point(x0, y1);
+            y0 -= step;
+            if (std::abs(y1 - y0) < EPS) {
+                continue;
+            }
+            Point* newPoint = new Point(x0, y0);
             newPoint->setBorder(initial_point->getBorder());
             allPoints.push_back(newPoint);
         }
@@ -135,6 +147,61 @@ void Mesh::findNeighbors(int index) {
                     }
                 }
 
+            }
+        }
+    }
+}
+
+void Mesh::addBorder(int index, Region reg) {
+    if (neighborInfo[index].upIndex == -1) {
+        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX(), allPoints[index]->getY() + cell_size));
+        for (int i=0; i<reg.getSize(); i++) {
+            std::optional<const Shape*> ptr1 = ray->intersect(reg.getShape(i));
+            if (ptr1 != std::nullopt) {
+                double y1 = static_cast<const Point*>(ptr1.value())->getY();
+                double x0 = allPoints[index]->getX();
+                Point* newPoint = new Point(x0, y1);
+                newPoint->setBorder(1);
+                allPoints.push_back(newPoint);
+            }
+        }
+    }
+    if (neighborInfo[index].downIndex == -1) {
+        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX(), allPoints[index]->getY() - cell_size));
+        for (int i=0; i<reg.getSize(); i++) {
+            std::optional<const Shape*> ptr1 = ray->intersect(reg.getShape(i));
+            if (ptr1 != std::nullopt) {
+                double y1 = static_cast<const Point*>(ptr1.value())->getY();
+                double x0 = allPoints[index]->getX();
+                Point* newPoint = new Point(x0, y1);
+                newPoint->setBorder(1);
+                allPoints.push_back(newPoint);
+            }
+        }
+    }
+    if (neighborInfo[index].leftIndex == -1) {
+        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX() - cell_size, allPoints[index]->getY()));
+        for (int i=0; i<reg.getSize(); i++) {
+            std::optional<const Shape*> ptr1 = ray->intersect(reg.getShape(i));
+            if (ptr1 != std::nullopt) {
+                double x1 = static_cast<const Point*>(ptr1.value())->getX();
+                double y0 = allPoints[index]->getY();
+                Point* newPoint = new Point(x1, y0);
+                newPoint->setBorder(1);
+                allPoints.push_back(newPoint);
+            }
+        }
+    }
+    if (neighborInfo[index].rightIndex == -1) {
+        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX() + cell_size, allPoints[index]->getY()));
+        for (int i=0; i<reg.getSize(); i++) {
+            std::optional<const Shape*> ptr1 = ray->intersect(reg.getShape(i));
+            if (ptr1 != std::nullopt) {
+                double x1 = static_cast<const Point*>(ptr1.value())->getX();
+                double y0 = allPoints[index]->getY();
+                Point* newPoint = new Point(x1, y0);
+                newPoint->setBorder(1);
+                allPoints.push_back(newPoint);
             }
         }
     }

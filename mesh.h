@@ -26,6 +26,7 @@ class Mesh {
         std::vector<NeighborInfo> neighborInfo;
         void findNeighbors(int index);
         void findNeighbors();
+        void addBorder(int index, Region reg);
     public:
         std::vector<NeighborInfo> getNeighborInfo();
 };
