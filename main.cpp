@@ -24,24 +24,25 @@ int main() {
     double rad = 1;
     Point p5 = Point(1,1);
     Point p6 = Point(1,0);
-    Point p33 = Point(1,2);
     std::vector<Shape*> shapes = std::vector<Shape*> {
         // new Section(p1, p2),
         // new Section(p2, p3),
-        // new Arc(p4, rad, M_PI, 3*M_PI_2),
+        // new Arc(p4, rad/4, M_PI, 3*M_PI_2),
         // new Section(p5, p6),
         // new Section(p6,p1)
         new Section(p1, p2),
         new Section(p2, p3),
-        //new Section(p3, p33),
-        new Section(p3, p5),
+        new Section(p3, Point(0.25,1.45)),
+        new Section(Point(0.25,1.45), Point(0.50,1.25)),
+        new Section(Point(0.50,1.25), p5),
+        //new Section(p3, p5),
         new Section(p5, p6),
         new Section(p6,p1)
     };
     Region region(shapes);
     Section* a =  new Section(Point(0,0), Point(4,4));
     Section* b = new Section(Point(4,0), Point(0,4));
-    Arc* aarc = new Arc(Point(4,4), 1., M_PI, 3/2*M_PI);
+    Arc* aarc = new Arc(Point(4,4), 2., M_PI, 3*M_PI_2);
     std::optional<const Shape*> intersection = a->intersect(aarc);
     if (intersection.has_value()) {
         const Shape* shapePtr = intersection.value();

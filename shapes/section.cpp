@@ -9,11 +9,21 @@ double crossProduct(const Point& a, const Point& b, const Point& c) {
     return (b.getX() - a.getX()) * (c.getY() - a.getY()) - (b.getY() - a.getY()) * (c.getX() - a.getX());
 }
 
-bool onSegment(const Point& a, const Point& b, const Point& c) {
-    if (c.getX() <= std::max(a.getX(), b.getX()) && c.getX() >= std::min(a.getX(), b.getX()) &&
-        c.getY() <= std::max(a.getY(), b.getY()) && c.getY() >= std::min(a.getY(), b.getY()))
-        return true;
-    return false;
+bool onSegment(const Point& p1, const Point& p2, const Point& p) {
+    const double EPS = 1e-9;
+    double crossProduct = (p2.getY() - p1.getY()) * (p.getX() - p1.getX()) - (p2.getX() - p1.getX()) * (p.getY() - p1.getY());
+    if (std::abs(crossProduct) > EPS) {
+        return false; // Точка не коллинеарна отрезку
+    }
+    double dotProduct = (p.getX() - p1.getX()) * (p2.getX() - p1.getX()) + (p.getY() - p1.getY()) * (p2.getY() - p1.getY());
+    if (dotProduct < -EPS) {
+        return false;
+    }
+    double squaredLength = (p2.getX() - p1.getX()) * (p2.getX() - p1.getX()) + (p2.getY() - p1.getY()) * (p2.getY() - p1.getY());
+    if (dotProduct > squaredLength + EPS) {
+        return false;
+    }
+    return true;
 }
 
 std::optional<const Shape*> Section::intersect(const Shape* other) const {
@@ -39,8 +49,10 @@ std::optional<const Shape*> Section::intersect(const Shape* other) const {
             Point* p1 = new Point(x1, m * x1 + b);
             Point* p2 = new Point(x2, m * x2 + b);
 
-            if (onSegment(start_point, end_point, *p1) && arc->isPointOnArc(*p1)) return p1;
-            if (onSegment(start_point, end_point, *p2) && arc->isPointOnArc(*p2)) return p2;
+            if (bool temp=onSegment(start_point, end_point, *p1) && arc->isPointOnArc(*p1)) return p1;
+            else delete p1;
+            if (bool temp=onSegment(start_point, end_point, *p2) && arc->isPointOnArc(*p2)) return p2;
+            else delete p2;
         }
     }
     //Check if the other shape is a section

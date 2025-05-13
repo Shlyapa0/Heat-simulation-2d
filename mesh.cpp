@@ -6,6 +6,8 @@
 
 //#define EPS 1e-7
 
+const double EPS = std::numeric_limits<double>::epsilon() * 1e8;
+
 Mesh::Mesh(Region reg, double max_reg_size, double cell_sz, Point& initial_p) {
     initial_point = initial_p;
     std::ofstream fout;
@@ -93,8 +95,6 @@ void Mesh::getPointsY(std::vector<Point*>& allPoints, Point* initial_point, std:
         }
     }
 }
-
-const double EPS = std::numeric_limits<double>::epsilon() * 1e8;
 
 void Mesh::findNeighbors(int index) {
     double x = allPoints[index]->getX();
