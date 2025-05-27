@@ -27,6 +27,7 @@ class Mesh {
         void findNeighbors(int index);
         void findNeighbors();
         void addBorder(int index, Region reg);
+        void removeDuplicateAndClosePoints(double tolerance);
     public:
         std::vector<NeighborInfo> getNeighborInfo();
 };

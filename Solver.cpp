@@ -5,12 +5,12 @@
 #include <cmath>
 #include <iostream>
 
-//#define BORDER1 y - x + 2
+#define BORDER1 y - x + 2
 #define BORDER0 0
-#define BORDER1 0
+//#define BORDER1 0
 #define EPS 1e-9
-#define SOURCE0 -pow(pow(x, 2) + pow(y-1, 2) + 0.1, -1)
-//#define SOURCE0 0
+//#define SOURCE0 -pow(pow(x, 2) + pow(y-1, 2) + 0.1, -1)
+#define SOURCE0 0
 //#define SOURCE0 10
 
 Solver::Solver() {
@@ -37,6 +37,10 @@ void Solver::Step() {
             int neiborDownIndex = neighbor_info[i].downIndex;
             int neiborRightIndex = neighbor_info[i].rightIndex;
             int neiborLeftIndex = neighbor_info[i].leftIndex;
+            if (neiborUpIndex == -1 || neiborDownIndex == -1 || neiborLeftIndex == -1 || neiborRightIndex == -1) {
+                std::cout << "Warning: Not all neighbors found for point (" << solution_points[i].getX() << ", " << solution_points[i].getY() << ")." << std::endl;
+                continue;
+            }
             double x = solution_points[i].getX();
             double y = solution_points[i].getY();
             double source = SOURCE0;

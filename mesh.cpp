@@ -50,6 +50,7 @@ Mesh::Mesh(Region reg, double max_reg_size, double cell_sz, Point& initial_p) {
         if (allPoints[i]->getBorder()==0)
         addBorder(i, reg);
     }
+    removeDuplicateAndClosePoints(EPS);
     findNeighbors();
     std::size_t index = 0;
     for (auto point : allPoints) {
@@ -122,7 +123,7 @@ void Mesh::findNeighbors(int index) {
         // Проверяем, находятся ли точки достаточно близко друг к другу
         if (std::abs(dx) < cell_size+EPS && std::abs(dy) < cell_size+EPS) {
             //if (std::abs(dx) < EPS) {
-            if (std::abs(dx) < cell_size+EPS && std::abs(dx) > EPS) {
+            if (std::abs(dx) < EPS) {
                 // Проверяем, является ли точка j соседом точки i (вверх, вниз).
                 if (dy>0) {
                     if (neighborInfo[index].upIndex == -1 || dy < std::abs(allPoints[neighborInfo[index].upIndex]->getY() - y)) {
@@ -135,7 +136,7 @@ void Mesh::findNeighbors(int index) {
                 }
             }
             //if (std::abs(dy) < EPS){
-            if (std::abs(dy) < cell_size+EPS && std::abs(dy) > EPS) {
+            if (std::abs(dy) < EPS) {
                 // Проверяем, является ли точка j соседом точки i (влево, вправо).
                 if (dx<0) {
                     if (neighborInfo[index].leftIndex == -1 || dx > std::abs(allPoints[neighborInfo[index].leftIndex]->getX() - x)) {
@@ -146,10 +147,16 @@ void Mesh::findNeighbors(int index) {
                         neighborInfo[index].rightIndex = j;
                     }
                 }
-
             }
         }
     }
+    std::ofstream nout("neighborInfo.txt", std::ios::app);
+    nout << "Point: " << x << " " << y << " | ";
+    nout << "up: " << neighborInfo[index].upIndex << " ";
+    nout << "down: " << neighborInfo[index].downIndex << " ";
+    nout << "left: " << neighborInfo[index].leftIndex << " ";
+    nout << "right: " << neighborInfo[index].rightIndex << std::endl;
+    nout.close();
 }
 
 void Mesh::addBorder(int index, Region reg) {
@@ -217,4 +224,28 @@ void Mesh::findNeighbors() {
 std::vector<NeighborInfo> Mesh::getNeighborInfo() {
     findNeighbors();
     return neighborInfo;
+}
+
+void Mesh::removeDuplicateAndClosePoints(double tolerance) {
+    std::vector<Point*> uniquePoints;
+    std::vector<bool> toRemove(allPoints.size(), false);
+    std::vector<NeighborInfo> uniquePointsNeighborInfo;
+
+    for (size_t i = 0; i < allPoints.size(); ++i) {
+        if (toRemove[i]) continue;
+        Point* pi = allPoints[i];
+        for (size_t j = i + 1; j < allPoints.size(); ++j) {
+            if (toRemove[j]) continue;
+            Point* pj = allPoints[j];
+            double dx = pi->getX() - pj->getX();
+            double dy = pi->getY() - pj->getY();
+            if (std::sqrt(dx * dx + dy * dy) < tolerance) {
+                toRemove[j] = true;
+            }
+        }
+        uniquePoints.push_back(pi);
+        uniquePointsNeighborInfo.push_back(neighborInfo[i]);
+    }
+    allPoints = uniquePoints;
+    neighborInfo = uniquePointsNeighborInfo;
 }
