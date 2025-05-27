@@ -46,11 +46,11 @@ Mesh::Mesh(Region reg, double max_reg_size, double cell_sz, Point& initial_p) {
         }
     }
     neighborInfo.resize(allPoints.size());
-    findNeighbors();
     for (int i=0; i<allPoints.size(); i++) {
         if (allPoints[i]->getBorder()==0)
         addBorder(i, reg);
     }
+    findNeighbors();
     std::size_t index = 0;
     for (auto point : allPoints) {
         //fout << index << ": " << point->getX() << ' ' << point->getY() << ' ' << point->getBorder() << std::endl;
@@ -83,6 +83,7 @@ void Mesh::getPointsX(std::vector<Point*>& initialPoints, std::optional<const Sh
                 continue;
             }
             initialPoints.push_back(new Point(x1, y0));
+            //initialPoints.back()->setBorder(1);
         }
     }
 }
@@ -120,29 +121,28 @@ void Mesh::findNeighbors(int index) {
 
         // Проверяем, находятся ли точки достаточно близко друг к другу
         if (std::abs(dx) < cell_size+EPS && std::abs(dy) < cell_size+EPS) {
-            // Используем сравнение с допуском для координат
             //if (std::abs(dx) < EPS) {
-            if (std::abs(dx) < cell_size+EPS) {
+            if (std::abs(dx) < cell_size+EPS && std::abs(dx) > EPS) {
                 // Проверяем, является ли точка j соседом точки i (вверх, вниз).
                 if (dy>0) {
-                    if (neighborInfo[index].upIndex == -1) {
+                    if (neighborInfo[index].upIndex == -1 || dy < std::abs(allPoints[neighborInfo[index].upIndex]->getY() - y)) {
                         neighborInfo[index].upIndex = j;
                     }
                 } else if (dy<0) {
-                    if (neighborInfo[index].downIndex == -1) {
+                    if (neighborInfo[index].downIndex == -1 || dy > std::abs(allPoints[neighborInfo[index].downIndex]->getY() - y)) {
                         neighborInfo[index].downIndex = j;
                     }
                 }
             }
             //if (std::abs(dy) < EPS){
-            if (std::abs(dy) < cell_size+EPS) {
+            if (std::abs(dy) < cell_size+EPS && std::abs(dy) > EPS) {
                 // Проверяем, является ли точка j соседом точки i (влево, вправо).
                 if (dx<0) {
-                    if (neighborInfo[index].leftIndex == -1) {
+                    if (neighborInfo[index].leftIndex == -1 || dx > std::abs(allPoints[neighborInfo[index].leftIndex]->getX() - x)) {
                         neighborInfo[index].leftIndex = j;
                     }
                 } else if (dx>0) {
-                    if (neighborInfo[index].rightIndex == -1) {
+                    if (neighborInfo[index].rightIndex == -1 || dx < std::abs(allPoints[neighborInfo[index].rightIndex]->getX() - x)) {
                         neighborInfo[index].rightIndex = j;
                     }
                 }
@@ -154,7 +154,7 @@ void Mesh::findNeighbors(int index) {
 
 void Mesh::addBorder(int index, Region reg) {
     if (neighborInfo[index].upIndex == -1) {
-        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX(), allPoints[index]->getY() + cell_size));
+        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX(), allPoints[index]->getY() + cell_size + EPS));
         for (int i=0; i<reg.getSize(); i++) {
             std::optional<const Shape*> ptr1 = ray->intersect(reg.getShape(i));
             if (ptr1 != std::nullopt) {
@@ -167,7 +167,7 @@ void Mesh::addBorder(int index, Region reg) {
         }
     }
     if (neighborInfo[index].downIndex == -1) {
-        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX(), allPoints[index]->getY() - cell_size));
+        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX(), allPoints[index]->getY() - cell_size - EPS));
         for (int i=0; i<reg.getSize(); i++) {
             std::optional<const Shape*> ptr1 = ray->intersect(reg.getShape(i));
             if (ptr1 != std::nullopt) {
@@ -180,7 +180,7 @@ void Mesh::addBorder(int index, Region reg) {
         }
     }
     if (neighborInfo[index].leftIndex == -1) {
-        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX() - cell_size, allPoints[index]->getY()));
+        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX() - cell_size - EPS, allPoints[index]->getY()));
         for (int i=0; i<reg.getSize(); i++) {
             std::optional<const Shape*> ptr1 = ray->intersect(reg.getShape(i));
             if (ptr1 != std::nullopt) {
@@ -193,7 +193,7 @@ void Mesh::addBorder(int index, Region reg) {
         }
     }
     if (neighborInfo[index].rightIndex == -1) {
-        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX() + cell_size, allPoints[index]->getY()));
+        Section* ray = new Section(*allPoints[index], Point(allPoints[index]->getX() + cell_size + EPS, allPoints[index]->getY()));
         for (int i=0; i<reg.getSize(); i++) {
             std::optional<const Shape*> ptr1 = ray->intersect(reg.getShape(i));
             if (ptr1 != std::nullopt) {

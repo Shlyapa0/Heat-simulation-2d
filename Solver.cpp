@@ -5,11 +5,13 @@
 #include <cmath>
 #include <iostream>
 
-#define BORDER1 y - x - 2
+//#define BORDER1 y - x + 2
 #define BORDER0 0
-#define EPS 1e-7
-//#define SOURCE0 pow(pow(x, 2) + pow(y, 2) + 1, -1)
-#define SOURCE0 0
+#define BORDER1 0
+#define EPS 1e-9
+#define SOURCE0 -pow(pow(x, 2) + pow(y-1, 2) + 0.1, -1)
+//#define SOURCE0 0
+//#define SOURCE0 10
 
 Solver::Solver() {
     // Constructor implementation
@@ -22,11 +24,6 @@ Solver::Solver(Mesh mesh, double* pattern, double* borderEquation) {
     neighbor_info = mesh.getNeighborInfo();
     solution_points_prev.resize(mesh_points.size());
     solution_points_next.resize(mesh_points.size());
-    for (auto point : mesh_points) {
-        // double x = point->getX();
-        // double y = point->getY();
-        // solution_points.push_back(SolutionPoint(x, y, 0.0, point->getBorder()));
-    }
 }
 
 void Solver::Step() {
@@ -44,21 +41,26 @@ void Solver::Step() {
             double y = solution_points[i].getY();
             double source = SOURCE0;
             solution_points_next[i].setValue(calcPattern(
+                solution_points[neiborDownIndex].getValue(),
+                solution_points[neiborUpIndex].getValue(),
                 solution_points[neiborLeftIndex].getValue(),
                 solution_points[neiborRightIndex].getValue(),
-                solution_points[neiborUpIndex].getValue(),
-                solution_points[neiborDownIndex].getValue(),
-                std::abs(solution_points[neiborLeftIndex].getX() - solution_points[i].getX()),
-                std::abs(solution_points[neiborRightIndex].getX() - solution_points[i].getX()),
                 std::abs(solution_points[neiborDownIndex].getY() - solution_points[i].getY()),
                 std::abs(solution_points[neiborUpIndex].getY() - solution_points[i].getY()),
+                std::abs(solution_points[neiborLeftIndex].getX() - solution_points[i].getX()),
+                std::abs(solution_points[neiborRightIndex].getX() - solution_points[i].getX()),
                 source
             ));
+            
+            if (std::abs(x)<EPS && std::abs(y-1)<EPS) {
+            std::cout << "x: " << x << ", y: " << y << ", source:" << source << std::endl;
+            
         }
-        // std::cout << "Point " << i << ": " << solution_points[i].getValue() 
-        // << " -> " << solution_points_next[i].getValue() << std::endl;
+        }
+        
     }
     solution_points = solution_points_next;
+    
 }
 
 bool Solver::CheckConvergence() const {
