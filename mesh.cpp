@@ -126,26 +126,38 @@ void Mesh::findNeighbors(int index) {
             if (std::abs(dx) < EPS) {
                 // Проверяем, является ли точка j соседом точки i (вверх, вниз).
                 if (dy>0) {
-                    if (neighborInfo[index].upIndex == -1 || dy < std::abs(allPoints[neighborInfo[index].upIndex]->getY() - y)) {
+                    if (neighborInfo[index].upIndex == -1) {
                         neighborInfo[index].upIndex = j;
                     }
+                    // if (dy < std::abs(allPoints[neighborInfo[index].upIndex]->getY() - y)) {
+                    //     neighborInfo[index].upIndex = j;
+                    // }
                 } else if (dy<0) {
-                    if (neighborInfo[index].downIndex == -1 || dy > std::abs(allPoints[neighborInfo[index].downIndex]->getY() - y)) {
+                    if (neighborInfo[index].downIndex == -1) {
                         neighborInfo[index].downIndex = j;
                     }
+                    // if (dy > std::abs(allPoints[neighborInfo[index].downIndex]->getY() - y)) {
+                    //     neighborInfo[index].downIndex = j;
+                    // }
                 }
             }
             //if (std::abs(dy) < EPS){
             if (std::abs(dy) < EPS) {
                 // Проверяем, является ли точка j соседом точки i (влево, вправо).
                 if (dx<0) {
-                    if (neighborInfo[index].leftIndex == -1 || dx > std::abs(allPoints[neighborInfo[index].leftIndex]->getX() - x)) {
+                    if (neighborInfo[index].leftIndex == -1) {
                         neighborInfo[index].leftIndex = j;
                     }
+                    // if (dx > std::abs(allPoints[neighborInfo[index].leftIndex]->getX() - x)) {
+                    //     neighborInfo[index].leftIndex = j;
+                    // }
                 } else if (dx>0) {
-                    if (neighborInfo[index].rightIndex == -1 || dx < std::abs(allPoints[neighborInfo[index].rightIndex]->getX() - x)) {
+                    if (neighborInfo[index].rightIndex == -1) {
                         neighborInfo[index].rightIndex = j;
                     }
+                    // if (dx < std::abs(allPoints[neighborInfo[index].rightIndex]->getX() - x)) {
+                    //     neighborInfo[index].rightIndex = j;
+                    // }
                 }
             }
         }

@@ -32,12 +32,12 @@ int main() {
         // new Section(p6,p1)
         new Section(p1, p2),
         new Section(p2, p3),
-        new Section(p3, Point(1, 2)),
-        new Section(Point(1, 2), p5),
-        //new Section(p3, Point(0.25,1.45)),
-        //new Section(Point(0.25,1.45), Point(0.50,1.25)),
-        //new Section(Point(0.50,1.25), p5),
-        //new Section(p3, p5),
+        // new Section(p3, Point(1, 2)),
+        // new Section(Point(1, 2), p5),
+        new Section(p3, Point(0.25,1.45)),
+        new Section(Point(0.25,1.45), Point(0.50,1.25)),
+        new Section(Point(0.50,1.25), p5),
+        // new Section(p3, p5),
         new Section(p5, p6),
         new Section(p6,p1)
     };
